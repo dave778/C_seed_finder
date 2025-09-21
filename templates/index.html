@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Keno RNG Toolkit</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">Keno RNG Toolkit</a>
+      </div>
+    </nav>
+
+    <div class="container my-4">
+      {% if error %}
+      <div class="alert alert-danger">{{ error }}</div>
+      {% endif %}
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card mb-3">
+            <div class="card-header">Ingest Draw</div>
+            <div class="card-body">
+              <form method="post" action="/ingest">
+                <div class="mb-3">
+                  <label class="form-label">Machine ID</label>
+                  <input name="machine" class="form-control" placeholder="e.g. machine-1" required>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Draw (space-separated numbers)</label>
+                  <input name="draw" class="form-control" placeholder="e.g. 1 5 10 ... 80" required>
+                </div>
+                <button class="btn btn-primary" type="submit">Save Draw</button>
+              </form>
+            </div>
+          </div>
+
+          <div class="card mb-3">
+            <div class="card-header">Quick Search</div>
+            <div class="card-body">
+              <form method="post" action="/search">
+                <div class="mb-3">
+                  <label class="form-label">Machine</label>
+                  <select name="machine" class="form-select">
+                    {% for m in machines %}
+                      <option value="{{m}}">{{m}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Seeds (optional, space-separated, hex allowed)</label>
+                  <input name="seeds_text" class="form-control" placeholder="e.g. 0x1234abcd">
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <label class="form-label">Draws/sec</label>
+                    <input name="draws_per_second" type="number" value="1200" class="form-control">
+                  </div>
+                  <div class="col">
+                    <label class="form-label">Duration (s)</label>
+                    <input name="duration" type="number" value="300" class="form-control">
+                  </div>
+                </div>
+                <div class="mb-3 mt-2">
+                  <label class="form-label">Confidence threshold (0-1)</label>
+                  <input name="threshold" type="number" min="0" max="1" step="0.01" value="0.75" class="form-control">
+                </div>
+                <button class="btn btn-success" type="submit">Run Search</button>
+              </form>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="col-md-6">
+          <div class="card mb-3">
+            <div class="card-header">Help & Info</div>
+            <div class="card-body">
+              <p>Use the left forms to ingest draws and run quick searches. Results will be saved to <code>results/</code>.</p>
+              <p>For heavy searches use the CLI (fast) or tune the number of worker processes in <code>search.run_parallel_search</code>.</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">Recent Machines</div>
+            <div class="card-body">
+              <ul class="list-group">
+                {% for m in machines %}
+                <li class="list-group-item">{{m}}</li>
+                {% else %}
+                <li class="list-group-item">(no machines yet)</li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
